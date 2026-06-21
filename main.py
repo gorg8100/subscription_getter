@@ -17,7 +17,6 @@ def get_subscription_data() -> str:
     req.add_header('x-device-os', DEVICE_OS)
     req.add_header('x-ver-os', VER_OS)
     req.add_header('x-device-model', DEVICE_MODEL)
-    # req.add_header('Accept', '*/*')
     response = urllib.request.urlopen(req)
     text = response.read()
     return text.decode('utf-8')
