@@ -1,8 +1,12 @@
 import functools
 from settings import DATA_LOGS_PATH
-from typing import TypeVar, Callable, Literal
-from typing_extensions import ParamSpec
+import sys
 from datetime import datetime
+if sys.version_info.minor < 10:
+    from typing import TypeVar, Callable, Literal
+    from typing_extensions import ParamSpec
+else:
+    from typing import TypeVar, Callable, Literal, ParamSpec
 
 
 def write_log(record_type: Literal["Error", "RepeatError"], error: Exception, func_name: str):
