@@ -10,10 +10,13 @@ else:
 
 
 def write_log(record_type: Literal["Error", "RepeatError"], error: Exception, func_name: str):
-    with open(DATA_LOGS_PATH, "a") as file:
-        print(
-            f"[{datetime.now().replace(microsecond=0)}][{record_type}]{type(error).__name__}: {error}. In {func_name}.",
-            file=file)
+    try:
+        with open(DATA_LOGS_PATH, "a") as file:
+            print(
+                f"[{datetime.now().replace(microsecond=0)}][{record_type}]{type(error).__name__}: {error}. In {func_name}.",
+                file=file)
+    except Exception as err:
+        raise RuntimeError(f"error when opening a file to write to the log at the path {DATA_LOGS_PATH}. {err}")
 
 
 F_Spec = ParamSpec("F_Spec")

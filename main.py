@@ -1,6 +1,11 @@
 import urllib.request
 from logger_logic import logg
-from settings import SUBSCRIPTION_URL, USER_AGENT, HWID, DEVICE_OS, VER_OS, DEVICE_MODEL, DATA_FILE_PATH
+from clear_logic import clear_data
+from settings_loader import load_settings
+
+settings = load_settings("/etc/subscription_getter_settings.py")
+
+from settings import SUBSCRIPTION_URL, USER_AGENT, HWID, DEVICE_OS, VER_OS, DEVICE_MODEL, DATA_FILE_PATH, CLEARED_DATA # noqa
 
 
 @logg()
@@ -23,7 +28,10 @@ def get_subscription_data() -> str:
 
 
 def main():
-    write_subscription_data(get_subscription_data())
+    data = get_subscription_data()
+    write_subscription_data(data)
+    if CLEARED_DATA:
+        clear_data(data)
 
 
 if __name__ == "__main__":

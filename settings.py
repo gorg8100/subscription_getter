@@ -1,3 +1,5 @@
+from typing import Union, Literal
+
 SUBSCRIPTION_URL = ""
 
 USER_AGENT = "Happ/3.13.0 (Android 14; Pixel 8 Pro)"
@@ -8,3 +10,21 @@ DEVICE_MODEL = "Pixel 8 Pro"
 
 DATA_FILE_PATH = "data.json"
 DATA_LOGS_PATH = "logs.txt"
+
+CLEARED_DATA = True
+CLEARED_DATA_FILE_PATH = "cleared_json_data.json"
+REPLACE_ROUTING: Union[dict, Literal["delete", "not-modify"]] = {"domainStrategy": "AsIs",
+                                                                 "rules": [
+                                                                     {
+                                                                         "domain": [
+                                                                             "geosite:category-ads-all"
+                                                                         ],
+                                                                         "outboundTag": "block"
+                                                                     },
+                                                                     {
+                                                                         "domain": [
+                                                                             "geosite:category-ru"
+                                                                         ],
+                                                                         "outboundTag": "direct"
+                                                                     }
+                                                                 ]}
