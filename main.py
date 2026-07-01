@@ -1,10 +1,10 @@
-import urllib.request
-from logger_logic import logg
-from clear_logic import clear_data
 from settings_loader import load_settings
 
 settings = load_settings("/etc/subscription_getter_settings.py")
 
+import urllib.request # noqa
+from logger_logic import logg # noqa
+from clear_logic import clear_data # noqa
 from settings import SUBSCRIPTION_URL, USER_AGENT, HWID, DEVICE_OS, VER_OS, DEVICE_MODEL, DATA_FILE_PATH, CLEARED_DATA # noqa
 
 

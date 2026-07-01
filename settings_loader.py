@@ -3,7 +3,7 @@ import sys
 import os
 
 
-def load_settings(custom_path: str = None):
+def load_settings(custom_path: str = ""):
     custom_path = os.environ.get("SUBSCRIPTION_GETTER_SETTINGS_FILE_PATH", custom_path)
     if custom_path and os.path.isfile(custom_path):
         try:
