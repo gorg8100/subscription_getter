@@ -2,10 +2,12 @@ from settings_loader import load_settings
 
 settings = load_settings("/etc/subscription_getter_settings.py")
 
-import urllib.request # noqa
-from logger_logic import logg # noqa
-from clear_logic import clear_data # noqa
-from settings import SUBSCRIPTION_URL, USER_AGENT, HWID, DEVICE_OS, VER_OS, DEVICE_MODEL, DATA_FILE_PATH, CLEARED_DATA # noqa
+import urllib.request  # noqa
+from urllib.error import URLError # noqa
+from logger_logic import logg  # noqa
+from clear_logic import clear_data  # noqa
+from settings import (BASE_SUBSCRIPTION_URL, CLEAR_JSON_SUBSCRIPTION_URL,
+                      USER_AGENT, HWID, DEVICE_OS, VER_OS, DEVICE_MODEL, DATA_FILE_PATH, CLEARED_DATA)  # noqa
 
 
 @logg()
@@ -15,8 +17,8 @@ def write_subscription_data(text) -> None:
 
 
 @logg(5)
-def get_subscription_data() -> str:
-    req = urllib.request.Request(SUBSCRIPTION_URL)
+def get_subscription_data(subscription_url: str) -> str:
+    req = urllib.request.Request(subscription_url)
     req.add_header('User-Agent', USER_AGENT)
     req.add_header('x-hwid', HWID)
     req.add_header('x-device-os', DEVICE_OS)
@@ -28,9 +30,13 @@ def get_subscription_data() -> str:
 
 
 def main():
-    data = get_subscription_data()
-    write_subscription_data(data)
+    try:
+        data = get_subscription_data(BASE_SUBSCRIPTION_URL)
+        write_subscription_data(data)
+    except URLError:
+        print("BASE_SUBSCRIPTION_URL was skipped")
     if CLEARED_DATA:
+        data = get_subscription_data(CLEAR_JSON_SUBSCRIPTION_URL)
         clear_data(data)
 
 
