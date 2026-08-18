@@ -12,6 +12,9 @@ def clear_config(config: dict):
             inbound.pop("listen", None)
             if "sniffing" in inbound:
                 inbound["sniffing"] = {"enabled": True}
+            if "settings" in inbound:
+                inbound["settings"] = {"auth": "noauth", "udp": True}
+
     if "outbounds" in config:
         outbound: dict
         for outbound in config["outbounds"]:
@@ -59,7 +62,6 @@ def clear_data(data: str):
 def write_json_data(json_data):
     with open(CLEARED_DATA_FILE_PATH, 'w', encoding="utf-8") as f:
         f.write(json.dumps(json_data, indent=4, ensure_ascii=False))
-
 
 # with open('data.json', "r", encoding="utf-8") as f:
 #    templates = f.read()

@@ -1,3 +1,6 @@
 .venv
 __pycache__
 .idea
+cleared_json_data.json
+data.json
+logs.txt
