@@ -278,10 +278,15 @@ def parse_transport_mkcp(url: XrayUrlBuilder, mkcp_settings: dict):
 
 def parse_transport_grpc(url: XrayUrlBuilder, grpc_settings: dict):
     url["type"] = "grpc"
-    url.try_set_header("serviceName", "serviceName", grpc_settings)
-    # url.try_set_header("mode", "multiMode", grpc_settings)
+    if "serviceName" in grpc_settings:
+        if grpc_settings["serviceName"] is not None:
+            url["serviceName"] = grpc_settings["serviceName"]
     if "multiMode" in grpc_settings:
         multi_mode = grpc_settings["multiMode"]
+        if multi_mode:
+            url["mode"] = "multi"
+    elif "mode" in grpc_settings:
+        multi_mode = grpc_settings["mode"]
         if multi_mode:
             url["mode"] = "multi"
     url.try_set_header("authority", "authority", grpc_settings)
