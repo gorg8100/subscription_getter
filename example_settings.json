@@ -2,7 +2,7 @@
   "log_file": "log.txt",
   "headers": {
     "User-Agent": "Happ/3.13.0 (Android 14; Pixel 8 Pro)",
-    "x-hwid": "5F0A4453542220203920AC1520201E448454046B459429294B43F",
+    "x-hwid": "5F0A4453542220203920AC1520201E448454046B459429294B43D",
     "x-device-os": "Android 14",
     "x-ver-os": "14",
     "x-device-model": "Pixel 8 Pro"
