@@ -1,10 +1,21 @@
-from logger_logic import logg
 import json
-from settings import REPLACE_ROUTING, CLEARED_DATA_FILE_PATH
+from typing import Union
+from pathlib import Path
+from settings_loader import ReplaceRoutingType
+from logger_logic import write_log
 
 
-@logg()
-def clear_config(config: dict):
+def clear_xray_json(sub_data: str, replace_routing: Union[None, ReplaceRoutingType], log_file: Path) -> str:
+    json_data = json.loads(sub_data)
+    for config in json_data:
+        try:
+            clear_config(config, replace_routing)
+        except Exception as err:
+            write_log(err, log_file, f"problem with config:\n{json.dumps(config, ensure_ascii=False, indent=2)}")
+    return json.dumps(json_data, indent=4, ensure_ascii=False)
+
+
+def clear_config(config: dict, replace_routing: Union[None, ReplaceRoutingType]):
     config.pop("log", None)
     if "inbounds" in config:
         inbound: dict
@@ -38,31 +49,9 @@ def clear_config(config: dict):
         routing["domainStrategy"] = "AsIs"
         routing["rules"] = list(filter(lambda x: "balancerTag" in x, routing["rules"]))
     else:
-        if isinstance(REPLACE_ROUTING, dict):
-            config["routing"] = REPLACE_ROUTING
-        elif REPLACE_ROUTING == "delete":
+        if isinstance(replace_routing, dict):
+            config["routing"] = replace_routing
+        elif replace_routing == "delete":
             config.pop("routing", None)
-        elif REPLACE_ROUTING != "not-delete":
+        elif replace_routing != "not-delete":
             raise TypeError("REPLACE_ROUTING must be either 'delete', 'not-delete' or json")
-
-
-@logg()
-def clear_data(data: str):
-    json_data = json.loads(data)
-    # print(json.dumps(json_data[5], indent=4, ensure_ascii=False))
-    # clear_config(json_data[5])
-    # print("===========")
-    # print(json.dumps(json_data[5], indent=4, ensure_ascii=False))
-    for config in json_data:
-        clear_config(config)
-    write_json_data(json_data)
-
-
-@logg()
-def write_json_data(json_data):
-    with open(CLEARED_DATA_FILE_PATH, 'w', encoding="utf-8") as f:
-        f.write(json.dumps(json_data, indent=4, ensure_ascii=False))
-
-# with open('data.json', "r", encoding="utf-8") as f:
-#    templates = f.read()
-# clear_data(templates)

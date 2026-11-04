@@ -1,19 +1,54 @@
-import importlib.util
-import sys
 import os
+import json
+from typing import Literal, Union, cast
+from pathlib import Path
+
+TransformsType = Literal["raw", "x_url2x_json", "x_json2x_url", "clear_x_json"]
+ReplaceRoutingType = Union[None, Literal["delete", "not-delete"], dict]
 
 
-def load_settings(custom_path: str = ""):
-    custom_path = os.environ.get("SUBSCRIPTION_GETTER_SETTINGS_FILE_PATH", custom_path)
-    if custom_path and os.path.isfile(custom_path):
-        try:
-            spec = importlib.util.spec_from_file_location("settings", custom_path)
-            settings = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(settings)
-            sys.modules["settings"] = settings
-        except Exception as err:
-            raise RuntimeError(f"problems loading settings from {custom_path}. {err}")
-        return settings
-    else:
-        import settings
-        return settings
+def read_settings_file(path: str) -> dict:
+    with open(path, "r", encoding="utf-8") as file:
+        data = json.load(file)
+    return data
+
+
+class DownloadSettings:
+    source: str
+    file: Path
+    type: TransformsType
+    replace_routing: Union[None, ReplaceRoutingType] = None
+
+    def __init__(self, data: dict[str, Union[str, TransformsType, dict]]):
+        self.source = cast(str, data["source"])
+        self.file = Path(cast(str, data["file"]))
+        self.type = cast(TransformsType, data["type"])
+        if self.type == "clear_x_json":
+            self.replace_routing = cast(ReplaceRoutingType, data["replace_routing"])
+        return
+
+    def to_dict(self) -> Union[dict[str, str], dict[str, Union[str, dict]]]:
+        if self.replace_routing is None:
+            return {"source": self.source, "file": str(self.file), "type": self.type}
+        else:
+            return {"source": self.source, "file": str(self.file), "type": self.type,
+                    "replace_routing": self.replace_routing}
+
+
+class Settings:
+    log_file: Path
+    headers: dict[str, str]
+    sources: dict[str, str]
+    downloads: list[DownloadSettings]
+
+    def __init__(self):
+        path = "\\etc\\sub_get_settings.json"
+        if os.path.isfile(path):
+            data = read_settings_file(path)
+        else:
+            data = read_settings_file("settings.json")
+        self.log_file = Path(data["log_file"])
+        self.headers = data["headers"]
+        self.sources = data["sources"]
+        self.downloads = list(map(DownloadSettings, data["downloads"]))
+        return

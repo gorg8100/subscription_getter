@@ -3,4 +3,5 @@ __pycache__
 .idea
 cleared_json_data.json
 data.json
-logs.txt
+log.txt
+settings.json

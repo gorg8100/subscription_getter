@@ -1,0 +1,36 @@
+{
+  "log_file": "log.txt",
+  "headers": {
+    "User-Agent": "Happ/3.13.0 (Android 14; Pixel 8 Pro)",
+    "x-hwid": "5F0A4453542220203920AC1520201E448454046B459429294B43F",
+    "x-device-os": "Android 14",
+    "x-ver-os": "14",
+    "x-device-model": "Pixel 8 Pro"
+  },
+  "sources": {
+    "example_url": "https://example.com",
+    "example_file": "example_file.txt"
+  },
+  "downloads": [
+    {
+      "source": "example_url",
+      "file": "example_raw.txt",
+      "type": "raw"
+    },
+    {
+      "source": "example_url",
+      "file": "example_j2u.txt",
+      "type": "x_json2x_url"
+    },
+    {
+      "source": "example_url",
+      "file": "example_u2j.json",
+      "type": "x_url2x_json"
+    },
+    {
+      "source": "example_url",
+      "file": "clear_j.json",
+      "type": "clear_x_json"
+    }
+  ]
+}
