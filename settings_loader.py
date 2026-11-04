@@ -42,7 +42,7 @@ class Settings:
     downloads: list[DownloadSettings]
 
     def __init__(self):
-        path = "\\etc\\sub_get_settings.json"
+        path = "/etc/sub_get_settings.json"
         if os.path.isfile(path):
             data = read_settings_file(path)
         else:
