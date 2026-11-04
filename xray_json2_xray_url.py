@@ -196,7 +196,10 @@ def parse_security_reality(url: XrayUrlBuilder, reality_settings: dict):
     url["security"] = "reality"
     url.try_set_header("sni", "serverName", reality_settings)
     url.try_set_header("fp", "fingerprint", reality_settings)
-    url.try_set_header("pbk", "password", reality_settings)
+    if "password" in reality_settings:
+        url["pbk"] = reality_settings["password"]
+    elif "publicKey" in reality_settings:
+        url["pbk"] = reality_settings["publicKey"]
     url.try_set_header("sid", "shortId", reality_settings)
     url.try_set_header("spx", "spiderX", reality_settings)
     url.try_set_header("pqv", "mldsa65Verify", reality_settings)
