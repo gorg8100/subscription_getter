@@ -2,6 +2,7 @@ from settings_loader import Settings
 from get_sub_data import get_subscription_data
 from logger_logic import write_log
 from transforms import transform
+from cons_process import consolidation_process
 import json
 
 
@@ -23,6 +24,20 @@ def main():
         except Exception as err:
             write_log(err, settings.log_file,
                       f"problem with download:\n{json.dumps(download.to_dict(), ensure_ascii=False, indent=2)}")
+
+    for consolidation in settings.consolidations:
+        cons_subs_data = []
+        for source in consolidation.sources:
+            if source in subs_data:
+                cons_subs_data.append((consolidation.sources[source], subs_data[source]))
+        if not cons_subs_data:
+            continue
+        try:
+            consolidation_process()
+        except Exception as err:
+            write_log(err, settings.log_file,
+                      f"problem with consolidation:"
+                      f" {json.dumps(consolidation.to_dict(), ensure_ascii=False, indent=2)}")
     return
 
 

@@ -76,7 +76,7 @@ def xray_json2_xray_url(sub_data: str, log_file: Path) -> str:
             remark = config["remarks"]
         for outbound in config["outbounds"]:
             try:
-                if outbound["protocol"] in ["blackhole", "freedom"]:
+                if outbound["protocol"] in ["blackhole", "freedom", "dns"]:
                     continue
                 url = XrayUrlBuilder()
                 url.set_remark(remark)
@@ -178,6 +178,8 @@ def parse_security(url: XrayUrlBuilder, stream_settings: dict):
     elif security == "reality":
         reality_settings = stream_settings["realitySettings"]
         parse_security_reality(url, reality_settings)
+    elif security == "none":
+        return
     else:
         raise ValueError(f"Unknown security: {security}")
 

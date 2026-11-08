@@ -31,7 +31,16 @@
       "source": "example_url",
       "file": "clear_j.json",
       "type": "clear_x_json",
-      "replace_routing": null
+      "replace_routing": "delete"
+    }
+  ],
+  "consolidations": [
+    {
+      "sources": {
+        "example": "json"
+      },
+      "type": "json",
+      "file": ""
     }
   ]
 }
