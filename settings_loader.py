@@ -68,5 +68,5 @@ class Settings:
         self.headers = data["headers"]
         self.sources = data["sources"]
         self.downloads = list(map(DownloadSettings, data["downloads"]))
-        self.consolidations = list(map(Consolidation, data["consolidations"]))
+        # self.consolidations = list(map(Consolidation, data["consolidations"]))
         return
