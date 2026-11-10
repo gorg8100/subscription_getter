@@ -40,7 +40,8 @@
         "example": "json"
       },
       "type": "json",
-      "file": ""
+      "file": "",
+      "replace_routing": "delete"
     }
   ]
 }

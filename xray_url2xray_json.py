@@ -1,7 +1,7 @@
 from pathlib import Path
 from urllib.parse import urlparse, parse_qs
 import json
-from typing import Any
+from typing import Any, Union
 from logger_logic import write_log
 
 
@@ -109,9 +109,9 @@ def get_default_json_outbound() -> dict:
     }
 
 
-def xray_url2xray_json(sub_data: str, log_file: Path) -> str:
+def xray_url2xray_json(sub_data: str, log_file: Path, to_str: bool = True) -> Union[str, list[dict]]:
     urls = sub_data.split("\n")
-    xray_json = []
+    xray_json: list[dict] = []
     for url in urls:
         try:
             fragment_url = FragmentUrl(url)
@@ -119,7 +119,10 @@ def xray_url2xray_json(sub_data: str, log_file: Path) -> str:
             xray_json.append(get_default_json_config(outbound))
         except Exception as err:
             write_log(err, log_file, f"problem with url:\n{url}")
-    return json.dumps(xray_json, indent=4, ensure_ascii=False)
+    if to_str:
+        return json.dumps(xray_json, indent=2, ensure_ascii=False)
+    else:
+        return xray_json
 
 
 # ===============================
@@ -161,7 +164,7 @@ def parse_settings(fragment_url: FragmentUrl) -> dict:
     elif protocol in ["hysteria", "hysteria2", "hy", "hy2"]:
         return parse_hysteria2_settings(fragment_url)
     else:
-        raise
+        raise ValueError(f"Unknown protocol: {protocol}")
 
 
 def parse_vless_settings(fragment_url: FragmentUrl) -> dict:
@@ -200,7 +203,7 @@ def parse_security(fragment_url: FragmentUrl, stream_settings: dict):
         stream_settings["security"] = "reality"
         stream_settings["realitySettings"] = parse_security_reality(fragment_url)
     else:
-        raise
+        raise ValueError(f"Unknown security: {security}")
 
 
 def parse_security_tls(fragment_url: FragmentUrl) -> dict:
@@ -250,7 +253,7 @@ def parse_transport_settings(fragment_url: FragmentUrl, stream_settings: dict):
         stream_settings["method"] = "hysteria"
         stream_settings["hysteriaSettings"] = parse_transport_hysteria2(fragment_url)
     else:
-        raise
+        raise ValueError(f"Unknown transport: {transport}")
 
 
 def parse_transport_tcp_raw(fragment_url: FragmentUrl) -> dict:

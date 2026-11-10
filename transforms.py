@@ -10,7 +10,6 @@ def transform(sub_data: str, transform_type: TransformsType, replace_routing: Un
               file_path: Path, log_file: Path):
     res_data = transforms_routing(sub_data, transform_type, replace_routing, log_file)
     file_path.parent.mkdir(parents=True, exist_ok=True)
-    file_path.touch(exist_ok=True)
     file_path.write_text(res_data, encoding="utf-8")
     return
 

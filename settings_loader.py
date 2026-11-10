@@ -1,10 +1,10 @@
 import os
 import json
-from typing import Literal, Union, Any, cast
+from typing import Literal, Union, cast
 from pathlib import Path
 
 TransformsType = Literal["raw", "x_url2x_json", "x_json2x_url", "clear_x_json"]
-ConsolidationType = Literal["x_url2x_json", "x_json2x_url", "clear_x_json"]
+ConsolidationType = Literal["json", "url", "cleared_json"]
 ReplaceRoutingType = Union[None, Literal["delete", "not-delete"], dict]
 
 
@@ -20,12 +20,12 @@ class DownloadSettings:
     type: TransformsType
     replace_routing: Union[None, ReplaceRoutingType] = None
 
-    def __init__(self, data: dict[str, Union[str, TransformsType, dict]]):
+    def __init__(self, data: dict[str, Union[str, Union[None, ReplaceRoutingType], dict]]):
         self.source = cast(str, data["source"])
         self.file = Path(cast(str, data["file"]))
         self.type = cast(TransformsType, data["type"])
         if self.type == "clear_x_json":
-            self.replace_routing = cast(ReplaceRoutingType, data["replace_routing"])
+            self.replace_routing = cast(Union[None, ReplaceRoutingType], data["replace_routing"])
         return
 
     def to_dict(self) -> Union[dict[str, str], dict[str, Union[str, dict]]]:
@@ -38,13 +38,16 @@ class DownloadSettings:
 
 class Consolidation:
     sources: dict[str, Literal["url", "json"]]
-    type: TransformsType
+    type: ConsolidationType
     file: Path
+    replace_routing: Union[None, ReplaceRoutingType] = None
 
-    def __init__(self, data: dict[str, Union[str, dict[str, str]]]):
+    def __init__(self, data: dict[str, Union[str, dict[str, str], Union[None, ReplaceRoutingType]]]):
         self.sources = cast(dict[str, Literal["url", "json"]], data["sources"])
-        self.type = cast(TransformsType, data["type"])
-        self.file = Path(data["file"])
+        self.type = cast(ConsolidationType, data["type"])
+        self.file = Path(cast(str, data["file"]))
+        if "replace_routing" in data:
+            self.replace_routing = cast(Union[None, ReplaceRoutingType], data["replace_routing"])
         return
 
     def to_dict(self) -> dict[str, Union[str, dict[str, str]]]:
@@ -55,8 +58,8 @@ class Settings:
     log_file: Path
     headers: dict[str, str]
     sources: dict[str, str]
-    downloads: list[DownloadSettings]
-    consolidations: list[Consolidation]
+    downloads: list[DownloadSettings] = None
+    consolidations: list[Consolidation] = None
 
     def __init__(self):
         path = "/etc/sub_get_settings.json"
@@ -67,6 +70,8 @@ class Settings:
         self.log_file = Path(data["log_file"])
         self.headers = data["headers"]
         self.sources = data["sources"]
-        self.downloads = list(map(DownloadSettings, data["downloads"]))
-        self.consolidations = list(map(Consolidation, data["consolidations"]))
+        if "downloads" in data:
+            self.downloads = list(map(DownloadSettings, data["downloads"]))
+        if "consolidations" in data:
+            self.consolidations = list(map(Consolidation, data["consolidations"]))
         return

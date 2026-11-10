@@ -59,7 +59,7 @@ class XrayUrlBuilder:
         return parse.urlunsplit((self.protocol, netloc, "", query, self.remark))
 
 
-def xray_json2_xray_url(sub_data: str, log_file: Path) -> str:
+def xray_json2_xray_url(sub_data: str, log_file: Path, to_str: bool = True) -> Union[str, list[str]]:
     json_data: list[dict] = json.loads(sub_data)
     urls = []
     for config in json_data:
@@ -85,7 +85,10 @@ def xray_json2_xray_url(sub_data: str, log_file: Path) -> str:
             except Exception as err:
                 write_log(err, log_file,
                           f"problem with outbound:\n{json.dumps(outbound, ensure_ascii=False, indent=2)}")
-    return "\n".join(map(str, urls))
+    if to_str:
+        return "\n".join(map(str, urls))
+    else:
+        return list(map(str, urls))
 
 
 # ===============================
