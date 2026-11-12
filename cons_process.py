@@ -24,8 +24,9 @@ def consolidation_process(subs_data: list[tuple[Literal["url", "json"], str]],
         data = "\n".join(accumulator)
     else:
         raise
-    consolidation.file.parent.mkdir(exist_ok=True)
-    consolidation.file.write_text(data, encoding="utf-8")
+    for file_path in consolidation.files:
+        file_path.parent.mkdir(exist_ok=True)
+        file_path.write_text(data, encoding="utf-8")
 
 
 def acc_update(accumulator: list, cons_type: Literal["url", "json"], sub_data: str,

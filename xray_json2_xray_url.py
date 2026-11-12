@@ -76,7 +76,7 @@ def xray_json2_xray_url(sub_data: str, log_file: Path, to_str: bool = True) -> U
             remark = config["remarks"]
         for outbound in config["outbounds"]:
             try:
-                if outbound["protocol"] in ["blackhole", "freedom", "dns"]:
+                if outbound["protocol"] in ("blackhole", "freedom", "dns"):
                     continue
                 url = XrayUrlBuilder()
                 url.set_remark(remark)

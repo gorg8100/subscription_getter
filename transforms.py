@@ -7,10 +7,11 @@ from xray_url2xray_json import xray_url2xray_json
 
 
 def transform(sub_data: str, transform_type: TransformsType, replace_routing: Union[None, ReplaceRoutingType],
-              file_path: Path, log_file: Path):
+              file_paths: list[Path], log_file: Path):
     res_data = transforms_routing(sub_data, transform_type, replace_routing, log_file)
-    file_path.parent.mkdir(parents=True, exist_ok=True)
-    file_path.write_text(res_data, encoding="utf-8")
+    for file_path in file_paths:
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        file_path.write_text(res_data, encoding="utf-8")
     return
 
 

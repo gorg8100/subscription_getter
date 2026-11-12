@@ -130,7 +130,7 @@ def xray_url2xray_json(sub_data: str, log_file: Path, to_str: bool = True) -> Un
 def parse_url(fragment_url: FragmentUrl) -> dict:
     outbound = get_default_json_outbound()
     stream_settings = {}
-    if fragment_url.protocol in ["hysteria", "hysteria2", "hy", "hy2"]:
+    if fragment_url.protocol in ("hysteria", "hysteria2", "hy", "hy2"):
         outbound["protocol"] = "hysteria"
         outbound["settings"] = parse_hysteria2_settings(fragment_url)
         if "security" in fragment_url:
@@ -161,7 +161,7 @@ def parse_settings(fragment_url: FragmentUrl) -> dict:
         return parse_vless_settings(fragment_url)
     elif protocol == "trojan":
         return parse_trojan_settings(fragment_url)
-    elif protocol in ["hysteria", "hysteria2", "hy", "hy2"]:
+    elif protocol in ("hysteria", "hysteria2", "hy", "hy2"):
         return parse_hysteria2_settings(fragment_url)
     else:
         raise ValueError(f"Unknown protocol: {protocol}")
@@ -231,7 +231,7 @@ def parse_security_reality(fragment_url: FragmentUrl) -> dict:
 
 def parse_transport_settings(fragment_url: FragmentUrl, stream_settings: dict):
     transport = fragment_url["type"]
-    if transport in ["tcp", "raw"]:
+    if transport in ("tcp", "raw"):
         stream_settings["method"] = "raw"
         stream_settings["rawSettings"] = parse_transport_tcp_raw(fragment_url)
     elif transport == "xhttp":

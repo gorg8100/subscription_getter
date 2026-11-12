@@ -29,7 +29,9 @@
     },
     {
       "source": "example_url",
-      "file": "clear_j.json",
+      "file": [
+        "clear_j.json"
+      ],
       "type": "clear_x_json",
       "replace_routing": "delete"
     }

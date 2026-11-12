@@ -16,13 +16,16 @@ def read_settings_file(path: str) -> dict:
 
 class DownloadSettings:
     source: str
-    file: Path
+    files: list[Path]
     type: TransformsType
     replace_routing: Union[None, ReplaceRoutingType] = None
 
-    def __init__(self, data: dict[str, Union[str, Union[None, ReplaceRoutingType], dict]]):
+    def __init__(self, data: dict[str, Union[Union[str, list[str]], Union[None, ReplaceRoutingType], dict]]):
         self.source = cast(str, data["source"])
-        self.file = Path(cast(str, data["file"]))
+        if isinstance(data["file"], str):
+            self.files = [Path(cast(str, data["file"]))]
+        else:
+            self.files = list(map(Path, cast(list[str], data["file"])))
         self.type = cast(TransformsType, data["type"])
         if self.type == "clear_x_json":
             self.replace_routing = cast(Union[None, ReplaceRoutingType], data["replace_routing"])
@@ -30,28 +33,31 @@ class DownloadSettings:
 
     def to_dict(self) -> Union[dict[str, str], dict[str, Union[str, dict]]]:
         if self.replace_routing is None:
-            return {"source": self.source, "file": str(self.file), "type": self.type}
+            return {"source": self.source, "file": str(self.files), "type": self.type}
         else:
-            return {"source": self.source, "file": str(self.file), "type": self.type,
+            return {"source": self.source, "file": str(self.files), "type": self.type,
                     "replace_routing": self.replace_routing}
 
 
 class Consolidation:
     sources: dict[str, Literal["url", "json"]]
     type: ConsolidationType
-    file: Path
+    files: list[Path]
     replace_routing: Union[None, ReplaceRoutingType] = None
 
-    def __init__(self, data: dict[str, Union[str, dict[str, str], Union[None, ReplaceRoutingType]]]):
+    def __init__(self, data: dict[str, Union[Union[str, list[str]], dict[str, str], Union[None, ReplaceRoutingType]]]):
         self.sources = cast(dict[str, Literal["url", "json"]], data["sources"])
         self.type = cast(ConsolidationType, data["type"])
-        self.file = Path(cast(str, data["file"]))
+        if isinstance(data["file"], str):
+            self.files = [Path(cast(str, data["file"]))]
+        else:
+            self.files = list(map(Path, cast(list[str], data["file"])))
         if "replace_routing" in data:
             self.replace_routing = cast(Union[None, ReplaceRoutingType], data["replace_routing"])
         return
 
     def to_dict(self) -> dict[str, Union[str, dict[str, str]]]:
-        return {"sources": self.sources, "type": self.type, "file": str(self.file)}
+        return {"sources": self.sources, "type": self.type, "file": str(self.files)}
 
 
 class Settings:

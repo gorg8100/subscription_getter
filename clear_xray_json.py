@@ -63,4 +63,4 @@ def clear_config(config: dict, replace_routing: Union[None, ReplaceRoutingType])
         elif replace_routing == "not-delete" or replace_routing is None:
             pass
         else:
-            raise TypeError("REPLACE_ROUTING must be either 'delete', 'not-delete' or json")
+            raise TypeError("REPLACE_ROUTING must be either 'delete', 'not-delete', json or null")

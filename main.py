@@ -20,7 +20,7 @@ def main():
                 continue
             try:
                 sub_data = subs_data[download.source]
-                transform(sub_data, download.type, download.replace_routing, download.file, settings.log_file)
+                transform(sub_data, download.type, download.replace_routing, download.files, settings.log_file)
             except Exception as err:
                 write_log(err, settings.log_file,
                           f"problem with download:"
