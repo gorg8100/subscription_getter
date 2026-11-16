@@ -65,8 +65,9 @@ class XrayUrlBuilder:
 def xray_json2_xray_url(sub_data: str, log_file: Path, to_str: bool = True) -> Union[str, list[str]]:
     json_data: list[dict] = json.loads(sub_data)
     urls: list[XrayUrlBuilder] = []
-    urls_balancers: list[XrayUrlBuilder] = []
+    urls_balancers: list[tuple[int, XrayUrlBuilder]] = []
     added_servers: Set[tuple[str, str, int]] = set()
+    added_srs_count = 0
     for config in json_data:
         has_balancers = False
         if "routing" in config:
@@ -88,18 +89,19 @@ def xray_json2_xray_url(sub_data: str, log_file: Path, to_str: bool = True) -> U
                 url.set_remark(remark)
                 parse_outbound(url, outbound)
                 if has_balancers:
-                    urls_balancers.append(url)
+                    urls_balancers.append((added_srs_count, url))
                 else:
                     urls.append(url)
                     added_servers.add(url.fingerprint())
+                    added_srs_count += 1
             except Exception as err:
                 write_log(err, log_file,
                           f"problem with outbound:\n{json.dumps(outbound, ensure_ascii=False, indent=2)}")
-    for url_balancers in urls_balancers:
+    for i, url_balancers in urls_balancers:
         if url_balancers.fingerprint() in added_servers:
             continue
         else:
-            urls.append(url_balancers)
+            urls.insert(i, url_balancers)
     if to_str:
         return "\n".join(map(str, urls))
     else:
