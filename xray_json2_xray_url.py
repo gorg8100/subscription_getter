@@ -63,18 +63,21 @@ def xray_json2_xray_url(sub_data: str, log_file: Path, to_str: bool = True) -> U
     json_data: list[dict] = json.loads(sub_data)
     urls = []
     for config in json_data:
+        has_balancers = False
         if "routing" in config:
             routing = config["routing"]
             if "balancers" in routing:
                 balancers = routing["balancers"]
                 if len(balancers):
-                    continue
+                    has_balancers = True
         if "outbounds" not in config:
             continue
         remark = None
         if "remarks" in config:
             remark = config["remarks"]
         for outbound in config["outbounds"]:
+            if has_balancers and remark is None:
+                continue
             try:
                 if outbound["protocol"] in ("blackhole", "freedom", "dns"):
                     continue
