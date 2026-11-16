@@ -1,4 +1,4 @@
-from typing import Union, Any
+from typing import Union, Any, Set
 import json
 from urllib import parse
 from pathlib import Path
@@ -58,10 +58,15 @@ class XrayUrlBuilder:
         netloc = f"{self.p_id}@{self.host}:{self.port}"
         return parse.urlunsplit((self.protocol, netloc, "", query, self.remark))
 
+    def fingerprint(self) -> tuple[str, str, int]:
+        return self.protocol, self.host, self.port
+
 
 def xray_json2_xray_url(sub_data: str, log_file: Path, to_str: bool = True) -> Union[str, list[str]]:
     json_data: list[dict] = json.loads(sub_data)
-    urls = []
+    urls: list[XrayUrlBuilder] = []
+    urls_balancers: list[XrayUrlBuilder] = []
+    added_servers: Set[tuple[str, str, int]] = set()
     for config in json_data:
         has_balancers = False
         if "routing" in config:
@@ -76,18 +81,25 @@ def xray_json2_xray_url(sub_data: str, log_file: Path, to_str: bool = True) -> U
         if "remarks" in config:
             remark = config["remarks"]
         for outbound in config["outbounds"]:
-            if has_balancers and remark is None:
-                continue
             try:
-                if outbound["protocol"] in ("blackhole", "freedom", "dns"):
+                if outbound["protocol"] in ("blackhole", "freedom", "dns", "loopback"):
                     continue
                 url = XrayUrlBuilder()
                 url.set_remark(remark)
                 parse_outbound(url, outbound)
-                urls.append(url)
+                if has_balancers:
+                    urls_balancers.append(url)
+                else:
+                    urls.append(url)
+                    added_servers.add(url.fingerprint())
             except Exception as err:
                 write_log(err, log_file,
                           f"problem with outbound:\n{json.dumps(outbound, ensure_ascii=False, indent=2)}")
+    for url_balancers in urls_balancers:
+        if url_balancers.fingerprint() in added_servers:
+            continue
+        else:
+            urls.append(url_balancers)
     if to_str:
         return "\n".join(map(str, urls))
     else:
