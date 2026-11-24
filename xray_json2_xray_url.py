@@ -45,7 +45,7 @@ class XrayUrlBuilder:
             else:
                 self.params[key] = "false"
         elif isinstance(value, dict):
-            self.params[key] = json.dumps(value)
+            self.params[key] = json.dumps(value, separators=(',', ':'), ensure_ascii=False)
         elif value is None:
             self.params[key] = "null"
         else:
