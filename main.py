@@ -4,6 +4,7 @@ from logger_logic import write_log
 from transforms import transform
 from cons_process import consolidation_process
 import json
+import base64
 
 
 def main():
@@ -11,6 +12,8 @@ def main():
     subs_data: dict[str, str] = {}
     for source in settings.sources:
         sub_data = get_subscription_data(settings.sources[source], settings.headers, settings.log_file)
+        if source in settings.sources_b64:
+            sub_data = base64.b64decode(sub_data).decode("utf-8")
         if sub_data is not None:
             subs_data[source] = sub_data
 

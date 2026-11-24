@@ -64,6 +64,7 @@ class Settings:
     log_file: Path
     headers: dict[str, str]
     sources: dict[str, str]
+    sources_b64: list[str] = []
     downloads: list[DownloadSettings] = None
     consolidations: list[Consolidation] = None
 
@@ -76,6 +77,8 @@ class Settings:
         self.log_file = Path(data["log_file"])
         self.headers = data["headers"]
         self.sources = data["sources"]
+        if "sources_b64" in data:
+            self.sources_b64 = data["sources_b64"]
         if "downloads" in data:
             self.downloads = list(map(DownloadSettings, data["downloads"]))
         if "consolidations" in data:

@@ -80,7 +80,7 @@ class FragmentUrl:
         return self.params[item]
 
 
-def get_default_json_config(outbound: dict) -> dict:
+def get_default_json_config(outbound: dict, remark: str) -> dict:
     return {
         "inbounds": [
             {
@@ -99,7 +99,8 @@ def get_default_json_config(outbound: dict) -> dict:
                 "tag": "http"
             }
         ],
-        "outbounds": [outbound]
+        "outbounds": [outbound],
+        "remarks": remark
     }
 
 
@@ -116,7 +117,7 @@ def xray_url2xray_json(sub_data: str, log_file: Path, to_str: bool = True) -> Un
         try:
             fragment_url = FragmentUrl(url)
             outbound = parse_url(fragment_url)
-            xray_json.append(get_default_json_config(outbound))
+            xray_json.append(get_default_json_config(outbound, fragment_url.remark))
         except Exception as err:
             write_log(err, log_file, f"problem with url:\n{url}")
     if to_str:

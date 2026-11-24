@@ -11,6 +11,7 @@
     "example_url": "https://example.com",
     "example_file": "example_file.txt"
   },
+  "sources_bs64": ["example_url"],
   "downloads": [
     {
       "source": "example_url",
