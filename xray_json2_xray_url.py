@@ -2,6 +2,7 @@ from typing import Union, Any, Set
 import json
 from urllib import parse
 from pathlib import Path
+from functools import partial
 from logger_logic import write_log
 
 
@@ -54,7 +55,8 @@ class XrayUrlBuilder:
     def __str__(self):
         if self.remark is None:
             self.remark = self.protocol
-        query = parse.urlencode(self.params)
+        quote_strict = partial(parse.quote, safe='')
+        query = parse.urlencode(self.params, quote_via=quote_strict)
         netloc = f"{self.p_id}@{self.host}:{self.port}"
         return parse.urlunsplit((self.protocol, netloc, "", query, self.remark))
 
