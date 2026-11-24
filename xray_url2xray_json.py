@@ -3,6 +3,7 @@ from urllib.parse import urlparse, parse_qs
 import json
 from typing import Any, Union
 from logger_logic import write_log
+from urllib.parse import unquote
 
 
 def multi_split(s: str, stop: list[str]) -> list[str]:
@@ -35,7 +36,7 @@ class FragmentUrl:
         self.host = netloc[1]
         self.port = int(netloc[2])
         self.params = {k: v[0] for k, v in parse_qs(parsed.query).items()}
-        self.remark = parsed.fragment
+        self.remark = unquote(parsed.fragment)
         return
 
     def get_param_as_list(self, item: str) -> list[str]:
