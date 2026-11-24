@@ -54,7 +54,7 @@ class XrayUrlBuilder:
     def __str__(self):
         if self.remark is None:
             self.remark = self.protocol
-        query = parse.urlencode(self.params,safe="", quote_via=parse.quote)
+        query = parse.urlencode(self.params, safe="", quote_via=parse.quote)
         netloc = f"{self.p_id}@{self.host}:{self.port}"
         return parse.urlunsplit((self.protocol, netloc, "", query, self.remark))
 
