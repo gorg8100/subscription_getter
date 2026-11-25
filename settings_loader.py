@@ -28,7 +28,8 @@ class DownloadSettings:
             self.files = list(map(Path, cast(list[str], data["file"])))
         self.type = cast(TransformsType, data["type"])
         if self.type == "clear_x_json":
-            self.replace_routing = cast(Union[None, ReplaceRoutingType], data["replace_routing"])
+            if "replace_routing" in data:
+                self.replace_routing = cast(Union[None, ReplaceRoutingType], data["replace_routing"])
         return
 
     def to_dict(self) -> Union[dict[str, str], dict[str, Union[str, dict]]]:
