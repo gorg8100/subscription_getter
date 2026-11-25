@@ -32,7 +32,7 @@ def clear_config(config: dict, replace_routing: Union[None, ReplaceRoutingType])
                 inbound["sniffing"] = {"enabled": True}
             if "settings" in inbound:
                 inbound["settings"] = {"auth": "noauth", "udp": True}
-
+    tag_flags = {"direct": False, "block": False}
     if "outbounds" in config:
         outbound: dict
         for outbound in config["outbounds"]:
@@ -45,9 +45,17 @@ def clear_config(config: dict, replace_routing: Union[None, ReplaceRoutingType])
                     outbound.pop("streamSettings", None)
             if "protocol" in outbound:
                 if outbound["protocol"] == "freedom":
-                    outbound["tag"] = "direct"
+                    if not tag_flags["direct"]:
+                        outbound["tag"] = "direct"
+                        tag_flags["direct"] = True
+                    else:
+                        outbound.pop("tag", None)
                 if outbound["protocol"] == "blackhole":
-                    outbound["tag"] = "block"
+                    if not tag_flags["block"]:
+                        outbound["tag"] = "block"
+                        tag_flags["block"] = True
+                    else:
+                        outbound.pop("tag", None)
         config["outbounds"] = list(filter(lambda x: x.get("protocol") != "dns", config["outbounds"]))
     config.pop("dns", None)
     if "routing" in config and len(config["routing"].get("balancers", [])):
